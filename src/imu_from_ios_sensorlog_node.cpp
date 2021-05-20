@@ -21,9 +21,9 @@ ros::Publisher imu_pub;
 using namespace std;
 int main(int argc, char* argv[])
 {
-	ros::init(argc, argv, "imu_from_ios_sensorlog_node");
+    ros::init(argc, argv, "imu_from_ios_sensorlog_node");
 
-	ros::NodeHandle nh;
+    ros::NodeHandle nh;
 
     sensor_msgs::Imu msg_imu;
     int port, maxline;
@@ -77,32 +77,11 @@ int main(int argc, char* argv[])
         result.push_back( substr );
         ROS_INFO_STREAM(substr);
     }
-    if(result.size() == 25)
+    if(result.size() != 25)
     {
-        ROS_INFO_STREAM("invalid data buffer");
+        ROS_ERROR_STREAM("invalid data buffer");
     }
 
-    /*
-    strcpy(buffer, "Hello Server\n");
-    sendto(sockfd, buffer, maxline, 0, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
-    printf("[+]Data Send: %s", buffer);
-
-
-    addr_size = sizeof(serverAddr);
-    n = recvfrom(sockfd, buffer, maxline, 0, (struct sockaddr*)&serverAddr, &addr_size);
-    buffer[n] = '\0';
-
-    n = recvfrom(sockfd, buffer, maxline, 0, (struct sockaddr*)&serverAddr, &addr_size);
-    buffer[n] = '\0';
-
-    std::ofstream myfile;
-    myfile.open("/home/usad2/example.csv");
-    myfile << buffer;
-    myfile.close();
-
-    ROS_INFO_STREAM(buffer);
-    ROS_INFO_STREAM(n);
-    */
 
     while (ros::ok())
     {
@@ -110,9 +89,9 @@ int main(int argc, char* argv[])
         n = read( sockfd , buffer, maxline);
         buffer[n] = '\0';
         //ROS_INFO_STREAM(buffer);
-        if(n>750){
-            ROS_INFO_STREAM(n);
-            ROS_INFO_STREAM("Transmission error");
+        if(n > 750){
+            ROS_WARN_STREAM(n);
+            ROS_WARN_STREAM("Transmission error");
         }else{
             result.clear();
             stringstream s_stream(buffer);
@@ -149,11 +128,16 @@ int main(int argc, char* argv[])
 
                 imu_pub.publish(msg_imu);
             }
+            else
+            {
+                ROS_ERROR_STREAM("number of data different from 25 but are: " << result.size());
+                ROS_ERROR_STREAM("Transmission error");
+            }
 
         }
 
         ros::spinOnce();
     }
-    //close(sockfd);
+    close(sockfd);
 
 }
