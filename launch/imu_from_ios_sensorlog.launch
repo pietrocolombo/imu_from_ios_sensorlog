@@ -1,11 +1,14 @@
 <launch>
+    <arg name="topic" default="imu_iphone"/>
+
     <node pkg="imu_from_ios_sensorlog" type="imu_from_ios_sensorlog_node" name="imu_from_ios_sensorlog_node" output="screen">
       
       <param name="ip" value="192.168.0.60"/>
       <param name="port" value="12000"/>
       <param name="maxline" value="4096"/>
-      <param name="topic" value="imu_iphone"/>
       <param name="frame_id" value="imu_iphone"/>
+
+      <remap from="imu_iphone" to="$(arg topic)" />
     
     </node>
 </launch>
