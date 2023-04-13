@@ -27,16 +27,15 @@ int main(int argc, char* argv[])
 
     sensor_msgs::Imu msg_imu;
     int port, maxline;
-    std::string ip, frame_id, topic;
+    std::string ip, frame_id;
 
     // param
     nh.param("ip", ip, std::string("192.168.0.60"));
     nh.param("port", port, 12000);
     nh.param("maxline", maxline, 4096);
-    nh.param("topic", topic, std::string("imu_iphone"));
     nh.param("frame_id", frame_id, std::string("imu_iphone"));
     
-    imu_pub = nh.advertise<sensor_msgs::Imu>(topic, 1);
+    imu_pub = nh.advertise<sensor_msgs::Imu>("imu_iphone", 1);
 
     msg_imu.header.frame_id = frame_id;
 
